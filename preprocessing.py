@@ -44,7 +44,7 @@ def gen_csv():
 
     for i, img_path in enumerate(img_paths):
         img = cv.imread(str(img_path), cv.IMREAD_GRAYSCALE)
-        img = (img > 0).astype(np.uint8)
+        img = (img == 0).astype(np.uint8)
 
         label = 1 if "pos" in str(img_path) else 0
         row = img.flatten()
