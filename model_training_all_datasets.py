@@ -287,31 +287,6 @@ normalized_df, normalized_results = evaluate_models(
     pca_components=None,
 )
 
-# PCA evaluation on normalized data
-pca_components = 50
-pca_df, pca_results = evaluate_models(
-    X_norm,
-    y_norm,
-    setting_name=f"dataset_norm_pca_{pca_components}",
-    use_scaling=True,
-    use_pca=True,
-    pca_components=pca_components,
-)
-
-best_overall = pd.concat(
-    [
-        baseline_df.assign(setting="baseline"),
-        normalized_df.assign(setting="dataset_norm"),
-        pca_df.assign(setting=f"pca_{pca_components}"),
-    ]
-).sort_values(["setting", "F1"], ascending=[True, False])
-print("\nOverall best models per setting:")
-print(
-    best_overall.groupby("setting")
-    .first()
-    .reset_index()
-    .to_string(index=False, float_format="%.4f")
-)
 
 # Tune SVM on the dataset-level normalized data and export the final model
 svm_grid = tune_svm_dataset_norm(X_norm, y_norm)
