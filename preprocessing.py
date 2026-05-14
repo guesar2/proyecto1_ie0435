@@ -3,42 +3,7 @@ import pathlib
 import cv2 as cv
 import numpy as np
 from pathlib import Path
-import sys
 IMG_SIZE = 128
-
-def preprocess_image(image):
-    gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-
-    # Background normalization
-    background = cv.GaussianBlur(gray, (31, 31), 0)
-    #background = np.maximum(background, 1)
-    #normalized = cv.divide(gray, background, scale=255)
-    normalized = gray
-    # Intensity-based detection
-    _, binary_int = cv.threshold(
-        normalized, 0, 255,
-        cv.THRESH_BINARY_INV + cv.THRESH_OTSU
-    )
-
-    # Color-based detection
-    hsv = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-    mask_color = cv.inRange(hsv, (0, 25, 50), (180, 255, 255))
-
-    # Combine (IMPORTANT: OR, not AND)
-    binary = cv.bitwise_or(binary_int, mask_color)
-
-    # Cleanup
-    kernel = np.ones((3,3), np.uint8)
-    binary = cv.morphologyEx(binary, cv.MORPH_OPEN, kernel)
-    binary = cv.morphologyEx(binary, cv.MORPH_CLOSE, kernel)
-
-    # Resize
-    resized = cv.resize(binary, (128, 128), interpolation=cv.INTER_AREA)
-
-    # Re-binarize (important!)
-    _, resized = cv.threshold(resized, 127, 255, cv.THRESH_BINARY)
-
-    return resized
 
 
 def process_image_to_matrix(image_path, output_size=(128, 128)):
@@ -46,7 +11,7 @@ def process_image_to_matrix(image_path, output_size=(128, 128)):
     Converts an image to a binary matrix using adaptive thresholding 
     to handle uneven lighting and reduce noise.
     """
-# 1. Read high-res grayscale
+    # 1. Read high-res grayscale
     img = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
     if img is None:
         raise ValueError("Could not read image.")
@@ -108,7 +73,6 @@ def gen_csv():
         img = cv.imread(str(img_path), cv.IMREAD_GRAYSCALE)
 
         # Robust binarization: background = 1, object = 0
-        #img = (img < 128).astype(np.uint8)
         matrix = (img / 255).astype(np.uint8)
         label = 1 if "pos" in str(img_path) else 0
 
