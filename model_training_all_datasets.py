@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore")
 # Utility functions
 
 
-def load_datasets(pattern="dataset*.csv"):
+def load_datasets(pattern="dataset.csv"):
     files = sorted(Path(".").glob(pattern))
     if not files:
         raise FileNotFoundError(f"No files found matching {pattern}")
