@@ -20,7 +20,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 from joblib import dump
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -225,6 +225,17 @@ def tune_svm_dataset_norm(X, y, filename="C22706_Guillermo_Escobar.joblib"):
         best_svm_preds,
         "Best Tuned SVM Confusion Matrix",
         "best_tuned_svm_confusion_matrix.png",
+    )
+
+    accuracy = accuracy_score(y, best_svm_preds)
+    precision = precision_score(y, best_svm_preds, average="weighted", zero_division=0)
+    recall = recall_score(y, best_svm_preds, average="weighted", zero_division=0)
+    f1 = f1_score(y, best_svm_preds, average="weighted", zero_division=0)
+
+    print("\nBest SVM model metrics:")
+    print("Model & Accuracy & Precision & Recall & F1")
+    print(
+        f"Support Vector Machine (SVM) & {accuracy:.4f} & {precision:.4f} & {recall:.4f} & {f1:.4f}"
     )
 
     dump(grid_search.best_estimator_, filename)
