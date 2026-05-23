@@ -2,3 +2,4 @@
 *.png
 *.jpg
 .agent.md
+*.pyc
