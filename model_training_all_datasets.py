@@ -219,9 +219,31 @@ def tune_svm_dataset_norm(X, y, filename="C22706_Guillermo_Escobar.joblib"):
     print("\nBest SVM parameters:", grid_search.best_params_)
     print(f"Best cross-validation accuracy: {grid_search.best_score_:.4f}")
 
+    best_svm_preds = cross_val_predict(grid_search.best_estimator_, X, y, cv=cv)
+    plot_confusion_matrix(
+        y,
+        best_svm_preds,
+        "Best Tuned SVM Confusion Matrix",
+        "best_tuned_svm_confusion_matrix.png",
+    )
+
     dump(grid_search.best_estimator_, filename)
     print(f"Saved tuned SVM model pipeline to {filename}")
+
     return grid_search
+
+
+def plot_confusion_matrix(y_true, y_pred, title, filename):
+    fig, ax = plt.subplots(figsize=(6, 5))
+    cm = confusion_matrix(y_true, y_pred)
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax, cbar=False)
+    ax.set_title(title)
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("True")
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150, bbox_inches="tight")
+    print(f"Saved confusion matrix plot as {filename}")
+    plt.close(fig)
 
 
 def plot_confusion_matrices(fold_predictions, y, setting_name):
